@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 
 import com.nfx.android.rangebarpreference.RangeBarHelper;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import sh.siava.AOSPMods.Utils.Helpers;
 import sh.siava.AOSPMods.XposedModPack;
 import sh.siava.AOSPMods.Utils.batteryStyles.BatteryBarView;
 import sh.siava.AOSPMods.Utils.batteryStyles.BatteryDrawable;
@@ -160,7 +162,14 @@ public class BatteryStyleManager extends XposedModPack {
         else {
             XposedBridge.hookAllMethods(BatteryMeterViewClass, "onBatteryLevelChanged", new batteryUpdater());
         }
-    
+
+        Helpers.dumpClass(BatteryMeterViewClass.getName(), lpparam);
+        for(Field f : BatteryMeterViewClass.getDeclaredFields())
+        {
+            XposedBridge.log("Field: " + f.getName());
+            Helpers.dumpClass(f.getType().getName(), lpparam);
+        }
+
         View.OnAttachStateChangeListener listener = new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View v) {
