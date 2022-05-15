@@ -3,6 +3,7 @@ package sh.siava.AOSPMods;
 import android.app.Instrumentation;
 import android.content.Context;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -10,6 +11,7 @@ import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import sh.siava.AOSPMods.Utils.Helpers;
 import sh.siava.AOSPMods.Utils.SystemUtils;
 import sh.siava.AOSPMods.allApps.overScrollDisabler;
 import sh.siava.AOSPMods.android.screenOffKeys;
@@ -77,6 +79,21 @@ public class AOSPMods implements IXposedHookLoadPackage{
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         isSecondProcess =  lpparam.processName.contains(":");
+
+
+        Class<?> BatteryMeterViewClass = XposedHelpers.findClassIfExists("com.android.systemui.battery.BatteryIconOpacity", lpparam.classLoader);
+
+        if(BatteryMeterViewClass == null)
+        {
+            BatteryMeterViewClass = XposedHelpers.findClass("com.android.systemui.battery.BatteryMeterView", lpparam.classLoader);
+        }
+
+        Helpers.dumpClass(BatteryMeterViewClass.getName(), lpparam);
+        for(Field f : BatteryMeterViewClass.getDeclaredFields())
+        {
+            XposedBridge.log("Field: " + f.getName());
+            Helpers.dumpClass(f.getType().getName(), lpparam);
+        }
 
         //        Helpers.dumpClass("android.app.Instrumentation", lpparam);
     
